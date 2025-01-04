@@ -43,6 +43,12 @@ const colorMode = useColorMode();
           Home
         </NuxtLink>
         <NuxtLink
+          href="/playground"
+          class="text-muted-foreground transition-colors hover:text-foreground"
+        >
+          Playground
+        </NuxtLink>
+        <NuxtLink
           href="/dashboard"
           class="text-muted-foreground transition-colors hover:text-foreground"
         >
@@ -66,6 +72,9 @@ const colorMode = useColorMode();
               <span class="sr-only">Offline SQL Query App</span>
             </NuxtLink>
             <NuxtLink to="/" class="hover:text-foreground"> Home </NuxtLink>
+            <NuxtLink to="/playground" class="hover:text-foreground">
+              Playground
+            </NuxtLink>
             <NuxtLink to="/dashboard" class="hover:text-foreground">
               Dashboard
             </NuxtLink>

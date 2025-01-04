@@ -1,7 +1,10 @@
 {
-  "name": "nuxt-app",
+  "name": "nuxt-offline-sqlite-query",
   "private": true,
   "type": "module",
+  "author": {
+    "name": "Ellipse120"
+  },
   "scripts": {
     "build": "nuxt build",
     "dev": "nuxt dev",
@@ -12,6 +15,7 @@
   "dependencies": {
     "@nuxtjs/color-mode": "3.5.2",
     "@radix-icons/vue": "^1.0.0",
+    "@sqlite.org/sqlite-wasm": "3.47.2-build1",
     "@tanstack/vue-table": "^8.20.5",
     "@vee-validate/zod": "^4.15.0",
     "@vueuse/core": "^12.3.0",

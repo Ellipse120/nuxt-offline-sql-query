@@ -14,6 +14,9 @@ importers:
       '@radix-icons/vue':
         specifier: ^1.0.0
         version: 1.0.0(vue@3.5.13(typescript@5.7.2))
+      '@sqlite.org/sqlite-wasm':
+        specifier: 3.47.2-build1
+        version: 3.47.2-build1
       '@tanstack/vue-table':
         specifier: ^8.20.5
         version: 8.20.5(vue@3.5.13(typescript@5.7.2))
@@ -952,6 +955,10 @@ packages:
   '@sindresorhus/merge-streams@2.3.0':
     resolution: {integrity: sha512-LtoMMhxAlorcGhmFYI+LhPgbPZCkgP6ra1YL604EeF6U98pLlQ3iWIGMdWSC+vWmPBWBNgmDBAhnAobLROJmwg==}
     engines: {node: '>=18'}
+
+  '@sqlite.org/sqlite-wasm@3.47.2-build1':
+    resolution: {integrity: sha512-jDRWfcPYmOsJGN1GplXbw5ZlB+PSzihw1EDElzqkenSI+yK7QYOfwhzYnBR9H8Bv5MHi6EUMb4t3CnLfXCSA8A==}
+    hasBin: true
 
   '@swc/helpers@0.5.15':
     resolution: {integrity: sha512-JQ5TuMi45Owi4/BIMAJBoSQoOJu12oOk/gADqlcUL9JEdHB8vyjUSsxqeNXnmXHjYKMi2WcYtezGEEhqUI/E2g==}
@@ -4591,6 +4598,8 @@ snapshots:
     optional: true
 
   '@sindresorhus/merge-streams@2.3.0': {}
+
+  '@sqlite.org/sqlite-wasm@3.47.2-build1': {}
 
   '@swc/helpers@0.5.15':
     dependencies:
