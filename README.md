@@ -1,23 +1,24 @@
-# Nuxt Minimal Starter
+# Nuxt Offline SQLite Query
 
-Look at the [Nuxt documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
+## TLDR
+
+- Set up SQLite WASM in a Vue 3 application for offline data storage
+- Learn how to use Origin Private File System (OPFS) for persistent storage
+- Build a SQLite query playground with Vue composables
+- Implement production-ready offline-first architecture
+- Compare SQLite vs IndexedDB for web applications
+
+> Add offline capabilities to your Nuxt3 application. While browsers offer IndexedDB, SQLite provides a more powerful solution for complex data operations. This project shows you how to integrate SQLite with Vue using WebAssembly for robust offline-first sqlite db query application.
+
+
 
 ## Setup
 
 Make sure to install dependencies:
 
 ```bash
-# npm
-npm install
-
 # pnpm
 pnpm install
-
-# yarn
-yarn install
-
-# bun
-bun install
 ```
 
 ## Development Server
@@ -25,17 +26,8 @@ bun install
 Start the development server on `http://localhost:3000`:
 
 ```bash
-# npm
-npm run dev
-
 # pnpm
 pnpm dev
-
-# yarn
-yarn dev
-
-# bun
-bun run dev
 ```
 
 ## Production
@@ -43,33 +35,15 @@ bun run dev
 Build the application for production:
 
 ```bash
-# npm
-npm run build
-
 # pnpm
 pnpm build
-
-# yarn
-yarn build
-
-# bun
-bun run build
 ```
 
 Locally preview production build:
 
 ```bash
-# npm
-npm run preview
-
 # pnpm
 pnpm preview
-
-# yarn
-yarn preview
-
-# bun
-bun run preview
 ```
 
 Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
