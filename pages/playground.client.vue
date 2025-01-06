@@ -3,21 +3,34 @@ const { isLoading, error, execQuery } = useSQLite();
 const sqlQuery = ref("SELECT * FROM test_table");
 const queryResult = ref<any[]>([]);
 const queryError = ref<string | null>(null);
+const consumingTime = ref<number | null>(null)
 
-// Predefined example queries for testing
-const exampleQueries = [
-  { title: "Select all", query: "SELECT * FROM test_table" },
+type exampleType = {
+  title: string;
+  query: string;
+  variant: "link" | "default" | "destructive" | "outline" | "secondary" | "ghost" | null | undefined;
+};
+
+const exampleQueries: exampleType[] = [
+  {
+    title: "Select all",
+    query: "SELECT * FROM test_table",
+    variant: "default",
+  },
   {
     title: "Insert",
     query: "INSERT INTO test_table (name) VALUES ('New Test Item')",
+    variant: "secondary",
   },
   {
     title: "Update",
     query: "UPDATE test_table SET name = 'Updated Item' WHERE name LIKE 'New%'",
+    variant: "outline",
   },
   {
     title: "Delete",
     query: "DELETE FROM test_table WHERE name = 'Updated Item'",
+    variant: "destructive",
   },
 ];
 
@@ -30,11 +43,11 @@ async function runQuery() {
     const isSelect = sqlQuery.value.trim().toLowerCase().startsWith("select");
 
     console.log(result);
+    consumingTime.value = result.workerRespondTime - result.workerReceivedTime
 
     if (isSelect) {
       queryResult.value = result?.result.resultRows || [];
     } else {
-      // After mutation, fetch updated data
       queryResult.value =
         (await execQuery("SELECT * FROM test_table"))?.result.resultRows || [];
     }
@@ -48,39 +61,42 @@ async function runQuery() {
   <div class="max-w-7xl mx-auto px-4 py-6">
     <h2 class="text-2xl font-bold">SQLite Playground</h2>
 
-    <!-- Example queries -->
-    <div class="mt-4">
+    <div class="mt-4 border p-4 rounded-lg">
       <h3 class="text-sm font-medium">Example Queries:</h3>
       <div class="flex gap-2 mt-2">
-        <button
+        <Button
           v-for="example in exampleQueries"
           :key="example.title"
-          class="px-3 py-1 text-sm rounded-full bg-gray-100 hover:bg-gray-200"
+          :variant="example.variant"
           @click="sqlQuery = example.query"
         >
           {{ example.title }}
-        </button>
+        </Button>
       </div>
     </div>
 
-    <!-- Query input -->
     <div class="mt-6">
-      <textarea
+      <Textarea
         v-model="sqlQuery"
         rows="4"
         class="w-full px-4 py-3 rounded-lg font-mono text-sm border"
         :disabled="isLoading"
       />
-      <button
+      <p class="text-sm text-muted-foreground">
+        Your SQL that to be executed.
+      </p>
+
+      <Button
         :disabled="isLoading"
         class="mt-2 px-4 py-2 rounded-lg bg-blue-600 text-white"
         @click="runQuery"
       >
         {{ isLoading ? "Running..." : "Run Query" }}
-      </button>
+      </Button>
+
+      <div v-if="consumingTime">Consumes time: {{ consumingTime ? `${consumingTime}ms`: null }}</div>
     </div>
 
-    <!-- Error display -->
     <div
       v-if="error || queryError"
       class="mt-4 p-4 rounded-lg bg-red-50 text-red-600"
@@ -88,34 +104,33 @@ async function runQuery() {
       {{ error?.message || queryError }}
     </div>
 
-    <!-- Results table -->
     <div v-if="queryResult.length" class="mt-4">
-      <h3 class="text-lg font-semibold">Results:</h3>
       <div class="mt-2 overflow-x-auto">
-        <table class="w-full">
-          <thead>
-            <tr>
-              <th
+        <Table>
+          <TableCaption>Results</TableCaption>
+          <TableHeader>
+            <TableRow>
+              <TableHead
                 v-for="column in Object.keys(queryResult[0])"
                 :key="column"
                 class="px-4 py-2 text-left"
               >
                 {{ column }}
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="(row, index) in queryResult" :key="index">
-              <td
+              </TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            <TableRow v-for="(row, index) in queryResult" :key="index">
+              <TableCell
                 v-for="column in Object.keys(row)"
                 :key="column"
                 class="px-4 py-2"
               >
                 {{ row[column] }}
-              </td>
-            </tr>
-          </tbody>
-        </table>
+              </TableCell>
+            </TableRow>
+          </TableBody>
+        </Table>
       </div>
     </div>
   </div>
