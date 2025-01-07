@@ -1,4 +1,5 @@
 import type { Worker } from "node:worker_threads";
+import type {Promiser} from "@sqlite.org/sqlite-wasm";
 
 declare module "@sqlite.org/sqlite-wasm" {
   type OnreadyFunction = () => void;
@@ -90,7 +91,12 @@ declare module "@sqlite.org/sqlite-wasm" {
     messageArguments: PromiserMethods[T]["args"]
   ) => Promise<PromiserResponse<T>>;
 
-  export function sqlite3Worker1Promiser(
-    config?: Sqlite3Worker1PromiserConfig | OnreadyFunction
-  ): Promiser;
+  export const sqlite3Worker1Promiser: {
+    (config?: Sqlite3Worker1PromiserConfig | OnreadyFunction): Promiser;
+
+    v2: (
+      config?: Sqlite3Worker1PromiserConfig | OnreadyFunction,
+    ) => Promise<Promiser>;
+    defaultConfig: Sqlite3Worker1PromiserConfig;
+  };
 }

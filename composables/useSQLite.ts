@@ -49,7 +49,6 @@ export function useSQLite(dbPath = '') {
 
       dbId = openResponse.result.dbId as string;
 
-      // Create initial tables
       await promiser("exec", {
         dbId,
         sql: databaseConfig.tables.test.schema,
