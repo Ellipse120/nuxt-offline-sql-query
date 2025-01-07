@@ -1,6 +1,9 @@
 <script setup lang="ts">
+import {RadioGroup, RadioGroupItem} from "~/components/ui/radio-group";
+
 const { isLoading, error, execQuery } = useSQLite();
-const sqlQuery = ref("SELECT * FROM test_table");
+const exampleTable = ref('test_table')
+const sqlQuery = ref(`SELECT * FROM ${exampleTable.value}`)
 const queryResult = ref<any[]>([]);
 const queryError = ref<string | null>(null);
 const consumingTime = ref<number | null>(null)
@@ -8,31 +11,41 @@ const consumingTime = ref<number | null>(null)
 type exampleType = {
   title: string;
   query: string;
-  variant: "link" | "default" | "destructive" | "outline" | "secondary" | "ghost" | null | undefined;
 };
 
-const exampleQueries: exampleType[] = [
+const exampleQueries = computed<exampleType[]>(() => [
   {
-    title: "Select all",
-    query: "SELECT * FROM test_table",
-    variant: "default",
+    title: "Select All",
+    query: `SELECT * FROM ${exampleTable.value}`,
   },
   {
     title: "Insert",
-    query: "INSERT INTO test_table (name) VALUES ('New Test Item')",
-    variant: "secondary",
+    query: `INSERT INTO ${exampleTable.value} (name, created_at) VALUES ('Item ' || abs(random() % 10000), datetime('now', 'localtime'))`,
   },
   {
     title: "Update",
-    query: "UPDATE test_table SET name = 'Updated Item' WHERE name LIKE 'New%'",
-    variant: "outline",
+    query: `UPDATE ${exampleTable.value} SET name = 'Updated Item' WHERE name LIKE 'New%'`,
   },
   {
     title: "Delete",
-    query: "DELETE FROM test_table WHERE name = 'Updated Item'",
-    variant: "destructive",
+    query: `DELETE FROM ${exampleTable.value} WHERE name = 'Item'`,
   },
-];
+]);
+
+const tableColumns = ref<string[]>([])
+
+watch(
+  exampleTable,
+  async (newVal) => {
+    const t = await execQuery(`pragma table_info('${newVal}')`)
+    tableColumns.value = t?.result?.resultRows?.map((row) => row?.[1] as string) || []
+
+    sqlQuery.value = `SELECT * FROM ${newVal}`
+  },
+  {
+    immediate: true
+  }
+)
 
 async function runQuery() {
   queryError.value = null;
@@ -49,7 +62,7 @@ async function runQuery() {
       queryResult.value = result?.result.resultRows || [];
     } else {
       queryResult.value =
-        (await execQuery("SELECT * FROM test_table"))?.result.resultRows || [];
+        (await execQuery(`SELECT * FROM ${exampleTable.value}`))?.result.resultRows || [];
     }
   } catch (err) {
     queryError.value = err instanceof Error ? err.message : "An error occurred";
@@ -62,16 +75,20 @@ async function runQuery() {
     <h2 class="text-2xl font-bold">SQLite Playground</h2>
 
     <div class="mt-4 border p-4 rounded-lg">
-      <h3 class="text-sm font-medium">Example Queries:</h3>
+
+      <Label>Example Table: </Label>
+      <Input v-model="exampleTable" class="mb-2" />
+
+      <Label >Example SQL Queries:</Label>
       <div class="flex gap-2 mt-2">
-        <Button
-          v-for="example in exampleQueries"
-          :key="example.title"
-          :variant="example.variant"
-          @click="sqlQuery = example.query"
-        >
-          {{ example.title }}
-        </Button>
+        <RadioGroup v-model="sqlQuery" class="flex">
+          <template v-for="example in exampleQueries" :key="example.title">
+            <RadioGroupItem :id="example.title" :value="example.query" />
+            <Label :for="example.title">
+              {{ example.title }}
+            </Label>
+          </template>
+        </RadioGroup>
       </div>
     </div>
 
@@ -91,10 +108,10 @@ async function runQuery() {
         class="mt-2 px-4 py-2 rounded-lg bg-blue-600 text-white"
         @click="runQuery"
       >
-        {{ isLoading ? "Running..." : "Run Query" }}
+        {{ isLoading ? "Running..." : "Run SQL" }}
       </Button>
 
-      <div v-if="consumingTime">Consumes time: {{ consumingTime ? `${consumingTime}ms`: null }}</div>
+      <div v-if="consumingTime">Consumes Time: {{ consumingTime ? `${(consumingTime).toFixed(2)} ms`: null }}</div>
     </div>
 
     <div
@@ -111,7 +128,7 @@ async function runQuery() {
           <TableHeader>
             <TableRow>
               <TableHead
-                v-for="column in Object.keys(queryResult[0])"
+                v-for="column in tableColumns"
                 :key="column"
                 class="px-4 py-2 text-left"
               >

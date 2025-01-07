@@ -1,6 +1,5 @@
 import type { DbId } from "@sqlite.org/sqlite-wasm";
 import { sqlite3Worker1Promiser } from "@sqlite.org/sqlite-wasm";
-import { ref } from "vue";
 
 const databaseConfig = {
   filename: "file:mydb.sqlite3?vfs=opfs",
@@ -18,7 +17,7 @@ const databaseConfig = {
   },
 } as const;
 
-export function useSQLite() {
+export function useSQLite(dbPath = '') {
   const isLoading = ref(false);
   const error = ref<Error | null>(null);
   const isInitialized = ref(false);
@@ -34,18 +33,14 @@ export function useSQLite() {
 
     try {
       // Initialize the SQLite worker
-      promiser = await new Promise((resolve) => {
-        const _promiser = sqlite3Worker1Promiser({
-          onready: () => resolve(_promiser),
-        });
-      });
+      promiser = await sqlite3Worker1Promiser.v2()
 
       if (!promiser) throw new Error("Failed to initialize promiser");
 
       // Get configuration and open database
       await promiser("config-get", {});
       const openResponse = await promiser("open", {
-        filename: databaseConfig.filename,
+        filename: dbPath || databaseConfig.filename,
       });
 
       if (openResponse.type === "error") {
